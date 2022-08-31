@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 
 
 const home = (req, res) => {
-  res.send("Home Page");
+  res.send("Home Page ");
 };
 
 const login = async (req,res) => {
