@@ -6,8 +6,8 @@ const db = require("./db");
 
 describe('my tests', () => {
 
-    afterAll(() => {db.end()}) 
-    
+  afterAll(() => { db.end() })
+
   //test for GET home
   test("should response 200 status code", async () => {
     const response = await request(app).get("/");
@@ -61,7 +61,7 @@ describe('my tests', () => {
       .expect(200)
       .set("Authorization", token);
     expect(response.statusCode).toBe(200);
-    
+
   });
 
 

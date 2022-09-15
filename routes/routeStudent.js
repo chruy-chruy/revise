@@ -4,6 +4,8 @@ const router = express.Router();
 //controller student
 const studentController = require("../controllers/controllerStudent");
 
+const verifyToken = require("./verifyToken");
+
 //home
 router.get("/", studentController.home);
 
@@ -11,7 +13,7 @@ router.get("/", studentController.home);
 router.get("/student", verifyToken, studentController.getAll);
 
 //POST login
-router.post("/login", verifyToken, studentController.login);
+router.post("/login", studentController.login);
 
 //get by ID
 router.get("/student/:id", verifyToken, studentController.getById);
@@ -25,24 +27,5 @@ router.put("/student/update/:id", verifyToken, studentController.updateStudent);
 //DELETE  Student
 router.delete("/student/delete/:id", verifyToken, studentController.deleteStudent);
 
-//verify token
-function verifyToken(req, res, next) {
-  // Get auth header value
-  const bearerHeader = req.headers["authorization"];
-  // Check if bearer is undefined
-  if (typeof bearerHeader !== "undefined") {
-    // Split at the space
-    const bearer = bearerHeader.split(" ");
-    // Get token from array
-    const bearerToken = bearer[1];
-    // Set the token
-    req.token = bearerToken;
-    // Next middleware
-    next();
-  } else {
-    // Forbidden
-    res.sendStatus(403);
-  }
-}
 
 module.exports = router;

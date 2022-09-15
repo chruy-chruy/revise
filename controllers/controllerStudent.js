@@ -1,8 +1,9 @@
 
 var db = require("../db");
 const jwt = require("jsonwebtoken");
+require('dotenv').config()
 
-
+const generateToken = require('./generateToken')
 
 const home = (req, res) => {
     res.send("Home Page");
@@ -13,25 +14,30 @@ const login = async (req, res) => {
     let query = `Select * from students where student_name = $1 AND email =  $2 `;
     let student = req.body;
     let params = [student.student_name, student.email];
-
-    await db.query(query, params)
+    let test = ["troy", "troy@gmail.com"]
+    await db.query(query, test)
         .then(result => {
-            let data = result.rows
-            let token = jwt.sign({ data }, "secretkey", { expiresIn: "1h" });
-            res.status(200).send({
-                message: "access approved ",
-                token: token,
-                use_data: data,
-            });
+            if (result.rowCount > 0) {
+                let data = result.rows
+                const token = generateToken(data)
+                res.status(200).send({
+                    message: "access approved ",
+                    token: token,
+                    use_data: data,
+                });
+            }
+            else {
+                res.status(400).send(" wrong username or password")
+            }
         })
         .catch(err => {
-            res.status(400).send(err);
+            res.status(400).send(err + "");
         })
 };
 
 const getAll = (req, res) => {
     const token = req.token
-    let query = `Select * from users`;
+    let query = `Select * from students`;
 
     jwt.verify(token, 'secretkey', async (err, user_info) => {
         if (err) {
@@ -46,7 +52,7 @@ const getAll = (req, res) => {
                     });
                 })
                 .catch(err => {
-                    res.status(400).send(err);
+                    res.status(400).send(err + "");
                 })
         }
     })
